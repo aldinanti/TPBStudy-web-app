@@ -23,17 +23,15 @@ jobs:
       - name: Install EAS CLI
         run: npm install -g eas-cli
 
-      - name: Login to EAS
-        env:
-          EAS_TOKEN: ${{ secrets.EAS_TOKEN }}
-        run: |
-          echo "Logging into EAS (token from secrets)"
-          eas login --token "$EAS_TOKEN"
-
       - name: Run EAS iOS build
         env:
           EAS_BUILD_WAIT: "true"
+          EAS_TOKEN: ${{ secrets.EAS_TOKEN }}
         run: |
+          if [ -z "$EAS_TOKEN" ]; then
+            echo "EAS_TOKEN secret is not set. Set repository secret EAS_TOKEN to an EAS token (run 'eas token:create' locally)."
+            exit 1
+          fi
           eas build --platform ios --profile production --non-interactive
 
       - name: Submit latest iOS build to TestFlight
@@ -41,10 +39,15 @@ jobs:
           ASC_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
           ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          EAS_TOKEN: ${{ secrets.EAS_TOKEN }}
         run: |
           if [ -z "$ASC_KEY_BASE64" ]; then
             echo "APP_STORE_CONNECT_API_KEY_BASE64 secret not set; skipping submit"
             exit 0
+          fi
+          if [ -z "$EAS_TOKEN" ]; then
+            echo "EAS_TOKEN secret is not set. Set repository secret EAS_TOKEN to an EAS token (run 'eas token:create' locally)."
+            exit 1
           fi
           echo "$ASC_KEY_BASE64" | base64 --decode > /tmp/asc_key.p8
           eas submit -p ios --latest --asc-api-key-path /tmp/asc_key.p8 --asc-issuer-id "$ASC_ISSUER_ID" --asc-key-id "$ASC_KEY_ID" --non-interactive
