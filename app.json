@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "TPBStudy",
-    "slug": "tpbstudy",
+    "slug": "TPBStudy",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/ios-light.png",
@@ -26,6 +26,7 @@
         "monochromeImage": "./assets/images/ios-dark.png"
       },
       "permissions": [
+        "CAMERA",
         "CAMERA"
       ],
       "edgeToEdgeEnabled": true,
@@ -44,16 +45,16 @@
       "expo-router",
       [
         "expo-splash-screen",
-      {
-        "image": "./assets/images/splash-icon-light.png",
-        "imageWidth": 200,
-        "resizeMode": "contain",
-        "backgroundColor": "#ffffff",
-        "dark": {
-          "image": "./assets/images/splash-icon-dark.png",
-          "backgroundColor": "#000000"
+        {
+          "image": "./assets/images/splash-icon-light.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff",
+          "dark": {
+            "image": "./assets/images/splash-icon-dark.png",
+            "backgroundColor": "#000000"
+          }
         }
-      }
       ],
       "expo-font",
       "expo-web-browser"
@@ -67,6 +68,12 @@
       "eas": {
         "projectId": "52041f96-fabb-41a0-988a-80554f80c0b3"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/52041f96-fabb-41a0-988a-80554f80c0b3"
     }
   }
 }
