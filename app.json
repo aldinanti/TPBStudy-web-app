@@ -13,7 +13,8 @@
       "bundleIdentifier": "com.leticiaaldina.TPBStudy",
       "buildNumber": "1.0.0",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "Kamera diperlukan untuk scan QR code Expo"
       }
     },
     "android": {
@@ -24,6 +25,9 @@
         "backgroundImage": "./assets/images/ios-light.png",
         "monochromeImage": "./assets/images/ios-dark.png"
       },
+      "permissions": [
+        "CAMERA"
+      ],
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },

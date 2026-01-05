@@ -19,19 +19,26 @@ export default function RootLayout() {
 
   useEffect(() => {
     let mounted = true;
+    let timeoutId: NodeJS.Timeout;
 
     // hide native splash as soon as possible, then show our overlay for 2s
     async function prepare() {
       try {
         await SplashScreen.preventAutoHideAsync();
-      } catch {}
+      } catch (e) {
+        console.log('SplashScreen.preventAutoHideAsync error:', e);
+      }
       try {
         await SplashScreen.hideAsync();
-      } catch {}
+      } catch (e) {
+        console.log('SplashScreen.hideAsync error:', e);
+      }
 
-      setTimeout(() => {
-        if (!mounted) return;
-        setShowOverlay(false);
+      // Set timeout untuk hide overlay setelah 2 detik
+      timeoutId = setTimeout(() => {
+        if (mounted) {
+          setShowOverlay(false);
+        }
       }, 2000);
     }
 
@@ -39,35 +46,32 @@ export default function RootLayout() {
 
     return () => {
       mounted = false;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
     };
   }, []);
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      {/* Render only the overlay while showOverlay is true so app pages aren't visible */}
-      {showOverlay ? (
-        <>
-          <View style={styles.overlay} pointerEvents="none">
-            <Image
-              source={
-                colorScheme === 'dark'
-                  ? require('../assets/images/splash-icon-dark.png')
-                  : require('../assets/images/splash-icon-light.png')
-              }
-              style={styles.image}
-              resizeMode="contain"
-            />
-          </View>
-          <StatusBar style="auto" />
-        </>
-      ) : (
-        <>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-          </Stack>
-          <StatusBar style="auto" />
-        </>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+      </Stack>
+      <StatusBar style="auto" />
+      {/* Render overlay on top if showOverlay is true */}
+      {showOverlay && (
+        <View style={styles.overlay} pointerEvents="none">
+          <Image
+            source={
+              colorScheme === 'dark'
+                ? require('../assets/images/splash-icon-dark.png')
+                : require('../assets/images/splash-icon-light.png')
+            }
+            style={styles.image}
+            resizeMode="contain"
+          />
+        </View>
       )}
     </ThemeProvider>
   );
