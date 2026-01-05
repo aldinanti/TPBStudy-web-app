@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { 
   StyleSheet, 
   View, 
@@ -7,77 +7,110 @@ import {
   TouchableOpacity, 
   SafeAreaView, 
   TextInput,
-  StatusBar 
+  StatusBar,
+  Animated,
+  Easing,
+  Dimensions
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
+const { width } = Dimensions.get('window');
+
 export default function HomeScreen() {
+  // --- LOGIKA ANIMASI TEXT JALAN ---
+  const scrollX = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const startAnimation = () => {
+      scrollX.setValue(width); // Mulai dari sisi kanan layar
+      Animated.timing(scrollX, {
+        toValue: -width * 2.5, // Berjalan ke kiri sampai teks habis
+        duration: 12000, // Kecepatan (makin besar makin lambat)
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }).start(() => startAnimation()); // Ulangi terus menerus
+    };
+    startAnimation();
+  }, [scrollX]);
+
   return (
     <SafeAreaView style={styles.container}>
+      {/* Status Bar agar ikon jam/baterai berwarna hitam di background putih */}
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+
+      {/* --- 1. RUNNING TEXT BANNER --- */}
+      <View style={styles.tickerContainer}>
+        <Animated.Text 
+          style={[
+            styles.tickerText, 
+            { transform: [{ translateX: scrollX }] }
+          ]}
+        >
+          📢 INFO: Modul Kalkulus IA Semester 2 sudah rilis! • Tutorial Sebaya Fisika Dasar akan berlangsung besok jam 19.00 WIB 🚀
+        </Animated.Text>
+      </View>
       
-      {/* 1. TOP NAVIGATION BAR */}
+      {/* --- 2. NAV BAR --- */}
       <View style={styles.navBar}>
-        <Text style={styles.brandText}>TPB<Text style={{color: '#3B82F6'}}>Study</Text></Text>
-        <View style={styles.navIcons}>
-          <TouchableOpacity style={styles.iconCircle}>
-            <Ionicons name="search-outline" size={20} color="#1F2937" />
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.iconCircle, {marginLeft: 12}]}>
-            <Ionicons name="notifications-outline" size={20} color="#1F2937" />
-          </TouchableOpacity>
+        <View style={styles.logoWrapper}>
+          <Text style={styles.logoText}>TPB<Text style={styles.logoBlue}>Study</Text></Text>
         </View>
+        <TouchableOpacity style={styles.iconCircle}>
+          <Ionicons name="notifications-outline" size={22} color="#000" />
+        </TouchableOpacity>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         
-        {/* 2. HERO SECTION (FOKUS TIPOGRAFI) */}
+        {/* --- 3. HERO SECTION --- */}
         <View style={styles.heroSection}>
-          <Text style={styles.heroLabel}>TAHAP PERSIAPAN BERSAMA</Text>
+          <Text style={styles.heroLabel}>OFFICIAL LEARNING PLATFORM</Text>
           <Text style={styles.heroTitle}>Kuasai Materi,{'\n'}Raih IPK Impian.</Text>
           <Text style={styles.heroSubtitle}>
-            Platform belajar mandiri khusus mahasiswa TPB dengan kurikulum terbaru dan latihan soal intensif.
+            Satu platform untuk semua materi TPB. Belajar lebih cerdas, bukan lebih keras.
           </Text>
         </View>
 
-        {/* 3. SEARCH BAR (MODERN FLAT) */}
-        <View style={styles.searchContainer}>
-          <Ionicons name="search" size={18} color="#9CA3AF" style={{marginRight: 10}} />
+        {/* --- 4. SEARCH BAR --- */}
+        <View style={styles.searchBox}>
+          <Ionicons name="search" size={20} color="#A0A0A0" />
           <TextInput 
-            placeholder="Cari rumus, materi, atau soal..." 
-            placeholderTextColor="#9CA3AF"
-            style={styles.searchInput}
+            placeholder="Cari materi, rumus, atau soal..." 
+            placeholderTextColor="#A0A0A0"
+            style={styles.searchField}
           />
         </View>
 
-        {/* 4. MATA KULIAH GRID */}
+        {/* --- 5. GRID MATA KULIAH --- */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Mata Kuliah Utama</Text>
           <TouchableOpacity>
-            <Text style={styles.seeAllText}>Lihat Semua</Text>
+            <Text style={styles.seeAll}>Lihat Semua</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={styles.grid}>
-          <CourseCard icon="calculator" title="Kalkulus" count="24 Modul" color="#EFF6FF" iconColor="#3B82F6" />
-          <CourseCard icon="flask" title="Kimia Dasar" count="18 Modul" color="#F0FDF4" iconColor="#10B981" />
-          <CourseCard icon="speedometer" title="Fisika Dasar" count="21 Modul" color="#FFF7ED" iconColor="#F59E0B" />
-          <CourseCard icon="code-slash" title="Komputasi" count="15 Modul" color="#F5F3FF" iconColor="#8B5CF6" />
+        <View style={styles.gridContainer}>
+          <CourseCard icon="calculator" title="Kalkulus" count="24 Modul" bg="#F0F7FF" tint="#007AFF" />
+          <CourseCard icon="flask" title="Kimia Dasar" count="18 Modul" bg="#F2FBF6" tint="#34C759" />
+          <CourseCard icon="speedometer" title="Fisika Dasar" count="21 Modul" bg="#FFF9F2" tint="#FF9500" />
+          <CourseCard icon="code-slash" title="Komputasi" count="15 Modul" bg="#F6F5FF" tint="#5856D6" />
         </View>
 
-        {/* 5. CONTINUE LEARNING (DARK CARD) */}
-        <Text style={[styles.sectionTitle, { marginTop: 32, marginBottom: 16 }]}>Lanjutkan Belajar</Text>
-        <TouchableOpacity style={styles.continueCard}>
-          <View style={styles.continueInfo}>
-            <Text style={styles.continueCategory}>SEDANG DIPELAJARI</Text>
-            <Text style={styles.continueTitle}>Turunan Fungsi Transenden</Text>
-            <View style={styles.progressBarContainer}>
-              <View style={[styles.progressBar, { width: '75%' }]} />
+        {/* --- 6. CONTINUE LEARNING (DARK MODE CARD) --- */}
+        <Text style={[styles.sectionTitle, { marginTop: 35, marginBottom: 15 }]}>Lanjutkan Belajar</Text>
+        <TouchableOpacity style={styles.featuredCard}>
+          <View style={styles.featuredInfo}>
+            <Text style={styles.featuredTag}>SEDANG DIPELAJARI</Text>
+            <Text style={styles.featuredTitle}>Turunan Fungsi Transenden</Text>
+            <View style={styles.progressRow}>
+              <View style={styles.barEmpty}>
+                <View style={[styles.barFull, { width: '75%' }]} />
+              </View>
+              <Text style={styles.percentText}>75%</Text>
             </View>
-            <Text style={styles.progressText}>Progres Belajar: 75%</Text>
           </View>
-          <View style={styles.playButton}>
-            <Ionicons name="play" size={20} color="white" />
+          <View style={styles.playBtn}>
+            <Ionicons name="play" size={22} color="#FFF" />
           </View>
         </TouchableOpacity>
 
@@ -86,12 +119,12 @@ export default function HomeScreen() {
   );
 }
 
-// Sub-komponen untuk Mata Kuliah
-function CourseCard({ icon, title, count, color, iconColor }: any) {
+// --- SUB-KOMPONEN UNTUK KARTU GRID ---
+function CourseCard({ icon, title, count, bg, tint }: any) {
   return (
-    <TouchableOpacity style={[styles.card, { backgroundColor: color }]}>
-      <View style={styles.cardIconHeader}>
-        <Ionicons name={icon} size={24} color={iconColor} />
+    <TouchableOpacity style={[styles.card, { backgroundColor: bg }]}>
+      <View style={styles.iconBox}>
+        <Ionicons name={icon} size={26} color={tint} />
       </View>
       <Text style={styles.cardTitle}>{title}</Text>
       <Text style={styles.cardCount}>{count}</Text>
@@ -99,182 +132,197 @@ function CourseCard({ icon, title, count, color, iconColor }: any) {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF', 
+    backgroundColor: '#FFFFFF',
+  },
+  // Running Text
+  tickerContainer: {
+    backgroundColor: '#007AFF', 
+    height: 30,
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  tickerText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '800',
+    width: width * 4, 
   },
   scrollContent: {
-    paddingHorizontal: 24,
-    paddingBottom: 40,
+    paddingHorizontal: 25,
+    paddingBottom: 50,
   },
+  // Logo & Nav
   navBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: 25,
     height: 70,
   },
-  navIcons: {
+  logoWrapper: {
     flexDirection: 'row',
+    alignItems: 'center',
   },
-  brandText: {
-    fontSize: 22,
+  logoText: {
+    fontSize: 24,
     fontWeight: '900',
-    letterSpacing: -1.2, 
-    color: '#111827',
+    color: '#000',
+    letterSpacing: -1.5,
+  },
+  logoBlue: {
+    color: '#007AFF',
   },
   iconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: '#F9FAFB',
+    width: 45,
+    height: 45,
+    borderRadius: 14,
+    backgroundColor: '#F8F8F8',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#F3F4F6',
+    borderColor: '#EFEFEF',
   },
-  // Typography Core
+  // Hero Section
   heroSection: {
-    marginTop: 20,
-    marginBottom: 24,
+    marginTop: 15,
+    marginBottom: 30,
   },
   heroLabel: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '800',
-    color: '#3B82F6',
-    letterSpacing: 1.5,
-    marginBottom: 12,
+    color: '#007AFF',
+    letterSpacing: 2,
+    marginBottom: 10,
   },
   heroTitle: {
-    fontSize: 36,
-    fontWeight: '800',
-    color: '#111827',
-    lineHeight: 42,
-    letterSpacing: -1.5, 
+    fontSize: 38,
+    fontWeight: '900',
+    color: '#000',
+    lineHeight: 44,
+    letterSpacing: -2,
   },
   heroSubtitle: {
     fontSize: 16,
-    color: '#6B7280',
-    lineHeight: 26,
-    marginTop: 16,
-    fontWeight: '400',
+    color: '#666',
+    lineHeight: 25,
+    marginTop: 15,
   },
-  // Search
-  searchContainer: {
+  // Search Bar
+  searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#F5F5F7',
     borderRadius: 16,
-    paddingHorizontal: 16,
-    height: 56,
-    borderWidth: 1,
-    borderColor: '#F3F4F6',
-    marginBottom: 32,
+    paddingHorizontal: 18,
+    height: 60,
+    marginBottom: 35,
   },
-  searchInput: {
+  searchField: {
     flex: 1,
-    fontSize: 15,
+    marginLeft: 12,
+    fontSize: 16,
     fontWeight: '500',
-    color: '#111827',
+    color: '#000',
   },
   // Grid
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    marginBottom: 16,
+    alignItems: 'center',
+    marginBottom: 18,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: '#111827',
-    letterSpacing: -0.5,
+    fontSize: 22,
+    fontWeight: '900',
+    color: '#000',
+    letterSpacing: -0.8,
   },
-  seeAllText: {
-    fontSize: 14,
+  seeAll: {
+    fontSize: 15,
     fontWeight: '700',
-    color: '#3B82F6',
+    color: '#007AFF',
   },
-  grid: {
+  gridContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: 14,
   },
   card: {
-    width: '48%',
-    padding: 20,
-    borderRadius: 24,
-    alignItems: 'flex-start',
+    width: '47.8%',
+    padding: 22,
+    borderRadius: 28,
   },
-  cardIconHeader: {
-    marginBottom: 16,
+  iconBox: {
+    marginBottom: 20,
   },
   cardTitle: {
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: '800',
-    color: '#1F2937',
-    letterSpacing: -0.3,
+    color: '#000',
+    letterSpacing: -0.5,
   },
   cardCount: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#6B7280',
+    color: '#888',
     marginTop: 4,
   },
-  
-  continueCard: {
+  // Featured Card (Lanjutkan Belajar)
+  featuredCard: {
+    backgroundColor: '#000',
+    padding: 25,
+    borderRadius: 30,
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 24,
-    backgroundColor: '#111827', 
-    borderRadius: 28,
   },
-  continueInfo: {
+  featuredInfo: {
     flex: 1,
   },
-  continueCategory: {
+  featuredTag: {
     fontSize: 10,
     fontWeight: '800',
-    color: '#9CA3AF',
-    letterSpacing: 1,
-    marginBottom: 6,
-  },
-  continueTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: 12,
-  },
-  progressBarContainer: {
-    height: 6,
-    backgroundColor: '#374151',
-    borderRadius: 3,
+    color: '#555',
+    letterSpacing: 1.5,
     marginBottom: 8,
   },
-  progressBar: {
+  featuredTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#FFF',
+    marginBottom: 15,
+  },
+  progressRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  barEmpty: {
+    flex: 1,
+    height: 6,
+    backgroundColor: '#333',
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  barFull: {
     height: '100%',
-    backgroundColor: '#3B82F6',
-    borderRadius: 3,
+    backgroundColor: '#007AFF',
   },
-  progressText: {
+  percentText: {
+    color: '#FFF',
     fontSize: 12,
-    color: '#9CA3AF',
-    fontWeight: '500',
+    fontWeight: '700',
   },
-  playButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#3B82F6',
+  playBtn: {
+    width: 55,
+    height: 55,
+    borderRadius: 20,
+    backgroundColor: '#007AFF',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 10,
-    
-    shadowColor: '#3B82F6',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    marginLeft: 15,
   },
 });
