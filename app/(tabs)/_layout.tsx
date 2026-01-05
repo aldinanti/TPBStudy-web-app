@@ -24,38 +24,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="about"
+        name="virtuallab"
         options={{
-          title: 'About',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="info.circle" color={color} />,
+          title: 'Virtual Lab',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="flask" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="articles"
+        name="pomodoro"
         options={{
-          title: 'Articles',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="doc.text" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="contact"
-        options={{
-          title: 'Contact',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="envelope" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="web"
-        options={{
-          title: 'Website',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="globe" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Pomodoro',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="timer" color={color} />,
         }}
       />
     </Tabs>

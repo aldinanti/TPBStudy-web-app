@@ -1,19 +1,19 @@
-import React, { useEffect, useRef } from 'react';
-import { 
-  StyleSheet, 
-  View, 
-  Text, 
-  ScrollView, 
-  TouchableOpacity, 
-  SafeAreaView, 
-  TextInput,
-  StatusBar,
-  Animated,
-  Easing,
-  Dimensions,
-  Image
-} from 'react-native';
+import Logo from '@/components/logo';
 import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useRef } from 'react';
+import {
+  Animated,
+  Dimensions,
+  Easing,
+  ImageBackground,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -36,6 +36,7 @@ export default function HomeScreen() {
   return (
     // Background diubah ke warna Creamy sesuai website
     <SafeAreaView style={styles.container}>
+      <ImageBackground source={require('../../assets/images/background-light.png')} style={styles.background}>
       <StatusBar barStyle="light-content" backgroundColor="#608BC1" />
 
       {/* 1. RUNNING TEXT */}
@@ -47,13 +48,9 @@ export default function HomeScreen() {
       
       {/* 2. NAV BAR */}
       <View style={styles.navBar}>
-        <View style={styles.logoWrapper}>
-          {/* Logo dibuat Putih Bersih di atas Background Biru agar kontras */}
-          <Text style={styles.logoText}>TPB<Text style={styles.logoLight}>study</Text></Text>
+        <View style={styles.logoWrapperCentered}>
+          <Logo size={56} />
         </View>
-        <TouchableOpacity style={styles.menuBtn}>
-          <Ionicons name="menu" size={28} color="#FFFFFF" />
-        </TouchableOpacity>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
@@ -88,18 +85,14 @@ export default function HomeScreen() {
           <Text style={styles.subjectTitle}>Matematika</Text>
           <Text style={styles.subjectDesc}>Grafik fungsi, kalkulus, dan geometri interaktif</Text>
           <View style={styles.tagRow}>
-             <Text style={styles.tag}>Grafik 2D/3D</Text>
-             <Text style={styles.tag}>Kalkulator</Text>
+            <Text style={styles.tag}>Grafik 2D/3D</Text>
+            <Text style={styles.tag}>Kalkulator</Text>
           </View>
-          <TouchableOpacity style={styles.cardBtn}>
-            <Text style={styles.cardBtnText}>Masuk Lab</Text>
-            <Ionicons name="arrow-forward" size={16} color="#FFF" />
-          </TouchableOpacity>
         </View>
 
         <View style={styles.subjectCard}>
           <View style={styles.iconBox}>
-            <Ionicons name="flask" size={30} color="#608BC1" />
+            <Ionicons name="speedometer" size={30} color="#608BC1" />
           </View>
           <Text style={styles.subjectTitle}>Fisika</Text>
           <Text style={styles.subjectDesc}>Simulasi gerak, gelombang, dan mekanika</Text>
@@ -110,6 +103,7 @@ export default function HomeScreen() {
         </View>
 
       </ScrollView>
+      </ImageBackground>
     </SafeAreaView>
   );
 }
@@ -119,6 +113,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F9FBF7', 
   },
+    background: { flex: 1 },
   tickerContainer: {
     backgroundColor: '#4A628A', 
     height: 30,
@@ -132,12 +127,17 @@ const styles = StyleSheet.create({
   },
   navBar: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#608BC1', 
     paddingHorizontal: 20,
     height: 70,
   },
+    logoWrapperCentered: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
   logoWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -215,10 +215,11 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#4A628A',
     marginLeft: 25,
+    marginTop: 12,
     marginBottom: 20,
   },
   subjectCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F5F6F7',
     marginHorizontal: 25,
     marginBottom: 20,
     padding: 25,

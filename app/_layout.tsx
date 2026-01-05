@@ -1,5 +1,5 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
+import { Slot } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
@@ -19,7 +19,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     let mounted = true;
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
     // hide native splash as soon as possible, then show our overlay for 2s
     async function prepare() {
@@ -54,14 +54,17 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
+      <Slot />
       <StatusBar style="auto" />
       {/* Render overlay on top if showOverlay is true */}
       {showOverlay && (
-        <View style={styles.overlay} pointerEvents="none">
+        <View
+          style={[
+            styles.overlay,
+            colorScheme === 'dark' ? styles.darkBackground : styles.lightBackground,
+          ]}
+          pointerEvents="none"
+        >
           <Image
             source={
               colorScheme === 'dark'
@@ -88,5 +91,11 @@ const styles = StyleSheet.create({
   image: {
     width: 240,
     height: 240,
+  },
+  darkBackground: {
+    backgroundColor: '#000',
+  },
+  lightBackground: {
+    backgroundColor: '#fff',
   },
 });
