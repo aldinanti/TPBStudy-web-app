@@ -22,6 +22,8 @@ const MAPPING = {
   'doc.text': 'article',
   'envelope': 'mail',
   'globe': 'language',
+  'flask': 'science',
+  'timer': 'timer',
 } as IconMapping;
 
 /**

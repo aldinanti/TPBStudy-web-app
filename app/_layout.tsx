@@ -1,27 +1,29 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Slot } from 'expo-router';
+import { Slot, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View, ActivityIndicator } from 'react-native';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 
 export const unstable_settings = {
   anchor: '(tabs)',
 };
 
-export default function RootLayout() {
+function RootLayoutNav() {
+  const { isAuthenticated, isLoading } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
   const colorScheme = useColorScheme();
-  // in-app overlay splash for Expo Go/dev clients
   const [showOverlay, setShowOverlay] = useState(true);
 
   useEffect(() => {
     let mounted = true;
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
-    // hide native splash as soon as possible, then show our overlay for 2s
     async function prepare() {
       try {
         await SplashScreen.preventAutoHideAsync();
@@ -34,7 +36,6 @@ export default function RootLayout() {
         console.log('SplashScreen.hideAsync error:', e);
       }
 
-      // Set timeout untuk hide overlay setelah 2 detik
       timeoutId = setTimeout(() => {
         if (mounted) {
           setShowOverlay(false);
@@ -52,11 +53,30 @@ export default function RootLayout() {
     };
   }, []);
 
+  useEffect(() => {
+    if (isLoading) return;
+
+    const inAuthGroup = segments[0] === '(tabs)';
+
+    if (!isAuthenticated && inAuthGroup) {
+      router.replace('/login');
+    } else if (isAuthenticated && segments[0] === 'login') {
+      router.replace('/(tabs)');
+    }
+  }, [isAuthenticated, isLoading, segments]);
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#608BC1" />
+      </View>
+    );
+  }
+
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Slot />
       <StatusBar style="auto" />
-      {/* Render overlay on top if showOverlay is true */}
       {showOverlay && (
         <View
           style={[
@@ -80,6 +100,14 @@ export default function RootLayout() {
   );
 }
 
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <RootLayoutNav />
+    </AuthProvider>
+  );
+}
+
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
@@ -97,5 +125,11 @@ const styles = StyleSheet.create({
   },
   lightBackground: {
     backgroundColor: '#fff',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F9FBF7',
   },
 });

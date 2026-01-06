@@ -13,12 +13,17 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Alert,
 } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useAuth } from '@/contexts/AuthContext';
 
 const { width } = Dimensions.get('window');
 
 export default function HomeScreen() {
   const scrollX = useRef(new Animated.Value(width)).current;
+  const { logout, user } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     const startAnimation = () => {
@@ -32,6 +37,24 @@ export default function HomeScreen() {
     };
     startAnimation();
   }, []);
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Apakah Anda yakin ingin logout?',
+      [
+        { text: 'Batal', style: 'cancel' },
+        {
+          text: 'Logout',
+          style: 'destructive',
+          onPress: async () => {
+            await logout();
+            router.replace('/login');
+          },
+        },
+      ]
+    );
+  };
 
   return (
     // Background diubah ke warna Creamy sesuai website
@@ -51,6 +74,9 @@ export default function HomeScreen() {
         <View style={styles.logoWrapperCentered}>
           <Logo size={56} />
         </View>
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+          <Ionicons name="log-out-outline" size={24} color="#FFF" />
+        </TouchableOpacity>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
@@ -127,17 +153,20 @@ const styles = StyleSheet.create({
   },
   navBar: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#608BC1', 
     paddingHorizontal: 20,
     height: 70,
   },
-    logoWrapperCentered: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
+  logoWrapperCentered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logoutButton: {
+    padding: 8,
+  },
   logoWrapper: {
     flexDirection: 'row',
     alignItems: 'center',

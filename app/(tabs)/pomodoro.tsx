@@ -1,4 +1,5 @@
 import Logo from '@/components/logo';
+import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
 import {
     Animated,
@@ -13,7 +14,10 @@ import {
     TouchableOpacity,
     Vibration,
     View,
+    Alert,
 } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function PomodoroScreen() {
   const WORK_DEFAULT = 25; // minutes
@@ -31,6 +35,26 @@ export default function PomodoroScreen() {
   const { width } = Dimensions.get('window');
   const scrollXRef = useRef(new Animated.Value(width));
   const scrollX = scrollXRef.current;
+  const { logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Apakah Anda yakin ingin logout?',
+      [
+        { text: 'Batal', style: 'cancel' },
+        {
+          text: 'Logout',
+          style: 'destructive',
+          onPress: async () => {
+            await logout();
+            router.replace('/login');
+          },
+        },
+      ]
+    );
+  };
 
   useEffect(() => {
     const startTicker = () => {
@@ -124,6 +148,9 @@ export default function PomodoroScreen() {
         <View style={styles.logoWrapperCentered}>
           <Logo size={56} />
         </View>
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+          <Ionicons name="log-out-outline" size={24} color="#FFF" />
+        </TouchableOpacity>
       </View>
       <View style={styles.header}>
         <Text style={styles.title}>Pomodoro</Text>
@@ -201,8 +228,22 @@ const styles = StyleSheet.create({
   background: { flex: 1 },
   tickerContainer: { height: 28, backgroundColor: '#4A628A', justifyContent: 'center', overflow: 'hidden' },
   tickerText: { color: '#fff', paddingHorizontal: 12, fontWeight: '700' },
-  navBar: { height: 64, backgroundColor: '#608BC1', justifyContent: 'center' },
-  logoWrapperCentered: { alignItems: 'center', justifyContent: 'center' },
+  navBar: { 
+    height: 64, 
+    backgroundColor: '#608BC1', 
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  logoWrapperCentered: { 
+    flex: 1,
+    alignItems: 'center', 
+    justifyContent: 'center' 
+  },
+  logoutButton: {
+    padding: 8,
+  },
   header: { padding: 20, alignItems: 'center' },
   title: { fontSize: 28, fontWeight: '800', color: '#4A628A' },
   subtitle: { color: '#7E99B0', marginTop: 6 },
