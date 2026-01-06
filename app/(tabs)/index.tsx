@@ -22,7 +22,7 @@ const { width } = Dimensions.get('window');
 
 export default function HomeScreen() {
   const scrollX = useRef(new Animated.Value(width)).current;
-  const { logout, user } = useAuth();
+  const { logout } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -114,6 +114,30 @@ export default function HomeScreen() {
             <Text style={styles.tag}>Grafik 2D/3D</Text>
             <Text style={styles.tag}>Kalkulator</Text>
           </View>
+          <TouchableOpacity
+            style={styles.cardBtn}
+            onPress={() => router.push('/(tabs)/virtuallab')}>
+            <Text style={styles.cardBtnText}>Masuk Lab</Text>
+            <Ionicons name="arrow-forward" size={16} color="#FFF" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.subjectCard}>
+          <View style={styles.iconBox}>
+            <Ionicons name="flask" size={30} color="#608BC1" />
+          </View>
+          <Text style={styles.subjectTitle}>Kimia</Text>
+          <Text style={styles.subjectDesc}>Tabel periodik dan kalkulator keasaman (pH)</Text>
+          <View style={styles.tagRow}>
+            <Text style={styles.tag}>Tabel Periodik</Text>
+            <Text style={styles.tag}>pH Calculator</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.cardBtn}
+            onPress={() => router.push('/(tabs)/lab-kimia')}>
+            <Text style={styles.cardBtnText}>Masuk Lab</Text>
+            <Ionicons name="arrow-forward" size={16} color="#FFF" />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.subjectCard}>
@@ -121,8 +145,14 @@ export default function HomeScreen() {
             <Ionicons name="speedometer" size={30} color="#608BC1" />
           </View>
           <Text style={styles.subjectTitle}>Fisika</Text>
-          <Text style={styles.subjectDesc}>Simulasi gerak, gelombang, dan mekanika</Text>
-          <TouchableOpacity style={styles.cardBtn}>
+          <Text style={styles.subjectDesc}>Simulasi gerak parabola dan mekanika</Text>
+          <View style={styles.tagRow}>
+            <Text style={styles.tag}>Gerak Parabola</Text>
+            <Text style={styles.tag}>Simulasi</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.cardBtn}
+            onPress={() => router.push('/(tabs)/lab-fisika')}>
             <Text style={styles.cardBtnText}>Masuk Lab</Text>
             <Ionicons name="arrow-forward" size={16} color="#FFF" />
           </TouchableOpacity>

@@ -79,9 +79,44 @@ export default function PomodoroScreen() {
 
   useEffect(() => {
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
     };
   }, []);
+
+  useEffect(() => {
+    // Handle timer when isRunning changes
+    if (isRunning) {
+      timerRef.current = setInterval(() => {
+        setSecondsLeft((s) => {
+          if (s <= 1) {
+            // switch mode
+            const next = mode === 'work' ? 'short' : mode === 'short' ? 'long' : 'work';
+            const nextSeconds = next === 'work' ? workMin * 60 : next === 'short' ? shortBreakMin * 60 : longBreakMin * 60;
+            setMode(next);
+            // vibrate briefly on mobile
+            if (Platform.OS !== 'web') Vibration.vibrate(300);
+            return nextSeconds;
+          }
+          return s - 1;
+        });
+      }, 1000);
+    } else {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    }
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [isRunning, mode, workMin, shortBreakMin, longBreakMin]);
 
   function currentModeToSeconds() {
     if (mode === 'work') return workMin * 60;
@@ -89,33 +124,12 @@ export default function PomodoroScreen() {
     return longBreakMin * 60;
   }
 
-  function tick() {
-    setSecondsLeft((s) => {
-      if (s <= 1) {
-        // switch mode
-        const next = mode === 'work' ? 'short' : 'work';
-        const nextSeconds = next === 'work' ? workMin * 60 : shortBreakMin * 60;
-        setMode(next);
-        // vibrate briefly on mobile
-        if (Platform.OS !== 'web') Vibration.vibrate(300);
-        return nextSeconds;
-      }
-      return s - 1;
-    });
-  }
-
   function start() {
-    if (isRunning) return;
     setIsRunning(true);
-    timerRef.current = setInterval(tick, 1000);
   }
 
   function pause() {
     setIsRunning(false);
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
   }
 
   function reset() {
