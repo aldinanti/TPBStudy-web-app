@@ -101,61 +101,58 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* 4. SUBJECT CARDS (Sesuai image_587d09.png) */}
+        {/* 4. MATA KULIAH LIST */}
         <Text style={styles.sectionTitle}>Mata Kuliah TPB ITB</Text>
         
-        <View style={styles.subjectCard}>
-          <View style={styles.iconBox}>
-            <Ionicons name="calculator" size={30} color="#608BC1" />
-          </View>
-          <Text style={styles.subjectTitle}>Matematika</Text>
-          <Text style={styles.subjectDesc}>Grafik fungsi, kalkulus, dan geometri interaktif</Text>
-          <View style={styles.tagRow}>
-            <Text style={styles.tag}>Grafik 2D/3D</Text>
-            <Text style={styles.tag}>Kalkulator</Text>
-          </View>
-          <TouchableOpacity
-            style={styles.cardBtn}
-            onPress={() => router.push('/(tabs)/virtuallab')}>
-            <Text style={styles.cardBtnText}>Masuk Lab</Text>
-            <Ionicons name="arrow-forward" size={16} color="#FFF" />
-          </TouchableOpacity>
+        <View style={styles.mataKuliahList}>
+          <Text style={styles.mataKuliahItem}>Matematika</Text>
+          <Text style={styles.mataKuliahItem}>Fisika</Text>
+          <Text style={styles.mataKuliahItem}>Kimia</Text>
+          <Text style={styles.mataKuliahItem}>Berpikir Komputasional</Text>
+          <Text style={styles.mataKuliahItem}>Literasi Digital dan AI</Text>
+          <Text style={styles.mataKuliahItem}>Olahraga</Text>
+          <Text style={styles.mataKuliahItem}>Pancasila</Text>
+          <Text style={styles.mataKuliahItem}>Bahasa Indonesia</Text>
+          <Text style={styles.mataKuliahItem}>Bahasa Inggris</Text>
         </View>
 
-        <View style={styles.subjectCard}>
-          <View style={styles.iconBox}>
-            <Ionicons name="flask" size={30} color="#608BC1" />
+        {/* 5. FOOTER - Navigasi & Kontak */}
+        <View style={styles.footer}>
+          <View style={styles.footerColumn}>
+            <Text style={styles.footerTitle}>Navigasi</Text>
+            <TouchableOpacity onPress={() => router.push('/(tabs)')}>
+              <Text style={styles.footerLink}>Home</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/(tabs)/virtuallab')}>
+              <Text style={styles.footerLink}>Virtual Lab</Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Text style={styles.footerLink}>About Us</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/(tabs)/pomodoro')}>
+              <Text style={styles.footerLink}>Pomodoro</Text>
+            </TouchableOpacity>
           </View>
-          <Text style={styles.subjectTitle}>Kimia</Text>
-          <Text style={styles.subjectDesc}>Tabel periodik dan kalkulator keasaman (pH)</Text>
-          <View style={styles.tagRow}>
-            <Text style={styles.tag}>Tabel Periodik</Text>
-            <Text style={styles.tag}>pH Calculator</Text>
-          </View>
-          <TouchableOpacity
-            style={styles.cardBtn}
-            onPress={() => router.push('/(tabs)/lab-kimia')}>
-            <Text style={styles.cardBtnText}>Masuk Lab</Text>
-            <Ionicons name="arrow-forward" size={16} color="#FFF" />
-          </TouchableOpacity>
-        </View>
 
-        <View style={styles.subjectCard}>
-          <View style={styles.iconBox}>
-            <Ionicons name="speedometer" size={30} color="#608BC1" />
+          <View style={styles.footerColumn}>
+            <Text style={styles.footerTitle}>Mata Kuliah</Text>
+            <Text style={styles.footerText}>Matematika</Text>
+            <Text style={styles.footerText}>Fisika</Text>
+            <Text style={styles.footerText}>Kimia</Text>
+            <Text style={styles.footerText}>Berpikir Komputasional</Text>
+            <Text style={styles.footerText}>Literasi Digital dan AI</Text>
+            <Text style={styles.footerText}>Olahraga</Text>
+            <Text style={styles.footerText}>Pancasila</Text>
+            <Text style={styles.footerText}>Bahasa Indonesia</Text>
+            <Text style={styles.footerText}>Bahasa Inggris</Text>
           </View>
-          <Text style={styles.subjectTitle}>Fisika</Text>
-          <Text style={styles.subjectDesc}>Simulasi gerak parabola dan mekanika</Text>
-          <View style={styles.tagRow}>
-            <Text style={styles.tag}>Gerak Parabola</Text>
-            <Text style={styles.tag}>Simulasi</Text>
+
+          <View style={styles.footerColumn}>
+            <Text style={styles.footerTitle}>Kontak</Text>
+            <Text style={styles.footerText}>Jl. awikawokoawk, Bandung, Jakarta</Text>
+            <Text style={styles.footerText}>08123456789</Text>
+            <Text style={styles.footerText}>@instagram</Text>
           </View>
-          <TouchableOpacity
-            style={styles.cardBtn}
-            onPress={() => router.push('/(tabs)/lab-fisika')}>
-            <Text style={styles.cardBtnText}>Masuk Lab</Text>
-            <Ionicons name="arrow-forward" size={16} color="#FFF" />
-          </TouchableOpacity>
         </View>
 
       </ScrollView>
@@ -277,66 +274,44 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 20,
   },
-  subjectCard: {
-    backgroundColor: '#F5F6F7',
+  mataKuliahList: {
     marginHorizontal: 25,
-    marginBottom: 20,
-    padding: 25,
-    borderRadius: 25,
-    borderWidth: 1,
-    borderColor: '#F0F0F0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 2,
+    marginBottom: 30,
+    gap: 12,
   },
-  iconBox: {
-    width: 60,
-    height: 60,
-    backgroundColor: '#F0F4F8',
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
+  mataKuliahItem: {
+    fontSize: 16,
+    color: '#608BC1',
+    paddingVertical: 8,
   },
-  subjectTitle: {
-    fontSize: 20,
+  footer: {
+    backgroundColor: '#F5F6F7',
+    paddingHorizontal: 25,
+    paddingVertical: 30,
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 20,
+  },
+  footerColumn: {
+    flex: 1,
+    gap: 8,
+  },
+  footerTitle: {
+    fontSize: 16,
     fontWeight: '800',
     color: '#4A628A',
+    marginBottom: 8,
   },
-  subjectDesc: {
+  footerLink: {
     fontSize: 14,
-    color: '#8E9AAF',
-    marginTop: 8,
-    lineHeight: 20,
-  },
-  tagRow: {
-    flexDirection: 'row',
-    gap: 8,
-    marginTop: 15,
-  },
-  tag: {
-    fontSize: 11,
     color: '#608BC1',
-    backgroundColor: '#E1E9F5',
-    paddingHorizontal: 10,
+    textDecorationLine: 'underline',
     paddingVertical: 4,
-    borderRadius: 8,
-    overflow: 'hidden',
   },
-  cardBtn: {
-    backgroundColor: '#608BC1',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderRadius: 12,
-    marginTop: 20,
-  },
-  cardBtnText: {
-    color: '#FFF',
-    fontWeight: '700',
-    marginRight: 10,
+  footerText: {
+    fontSize: 14,
+    color: '#608BC1',
+    paddingVertical: 2,
   },
 });

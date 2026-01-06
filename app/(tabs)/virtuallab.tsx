@@ -1,14 +1,11 @@
 import Logo from '@/components/logo';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions, Easing, ImageBackground, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
+import { Animated, Dimensions, Easing, ImageBackground, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function VirtualLabScreen() {
-  const fall = useRef(new Animated.Value(0)).current;
-  const [running, setRunning] = useState(false);
-  const [speed, setSpeed] = useState(1); // multiplier: higher => faster
   const { width } = Dimensions.get('window');
   const scrollXRef = useRef(new Animated.Value(width));
   const scrollX = scrollXRef.current;
@@ -44,32 +41,7 @@ export default function VirtualLabScreen() {
       }).start(() => startTicker());
     };
     startTicker();
-
-    let anim: Animated.CompositeAnimation | null = null;
-    if (running) {
-      anim = Animated.loop(
-        Animated.sequence([
-          Animated.timing(fall, {
-            toValue: 1,
-            duration: Math.max(300, 2000 / speed),
-            easing: Easing.in(Easing.quad),
-            useNativeDriver: true,
-          }),
-          Animated.timing(fall, {
-            toValue: 0,
-            duration: 50,
-            useNativeDriver: true,
-          }),
-        ])
-      );
-      anim.start();
-    }
-    return () => {
-      if (anim) anim.stop();
-    };
-  }, [running, speed, fall, scrollX, width]);
-
-  const translateY = fall.interpolate({ inputRange: [0, 1], outputRange: [0, 300] });
+  }, [scrollX, width]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -91,32 +63,79 @@ export default function VirtualLabScreen() {
         </TouchableOpacity>
       </View>
       <View style={styles.header}>
-        <Text style={styles.title}>Virtual Lab — Drop Simulation</Text>
-        <Text style={styles.subtitle}>Atur kecepatan lalu tekan Start untuk melihat bola jatuh.</Text>
+        <Text style={styles.title}>Virtual Lab</Text>
+        <Text style={styles.subtitle}>Pilih mata kuliah untuk masuk ke laboratorium virtual</Text>
       </View>
 
-      <View style={styles.simArea}>
-        <Animated.View style={[styles.ball, { transform: [{ translateY }] }]} />
-      </View>
-
-      <View style={styles.controls}>
-        <View style={styles.speedRow}>
-          <TouchableOpacity style={styles.smallBtn} onPress={() => setSpeed((s) => Math.max(0.2, +(s - 0.2).toFixed(1)))}>
-            <Text style={styles.smallBtnText}>-</Text>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        {/* Matematika */}
+        <View style={styles.labCard}>
+          <View style={styles.labCardHeader}>
+            <View style={styles.iconBox}>
+              <Ionicons name="calculator" size={30} color="#608BC1" />
+            </View>
+            <View style={styles.labCardContent}>
+              <Text style={styles.labCardTitle}>Matematika</Text>
+              <Text style={styles.labCardDesc}>Grafik fungsi, kalkulus, dan geometri interaktif</Text>
+            </View>
+          </View>
+          <TouchableOpacity
+            style={styles.labCardBtn}
+            onPress={() => router.push('/(tabs)/virtuallab?lab=matematika')}>
+            <Text style={styles.labCardBtnText}>Masuk Lab</Text>
+            <Ionicons name="arrow-forward" size={16} color="#FFF" />
           </TouchableOpacity>
-          <Text style={styles.speedText}>Speed: x{speed.toFixed(1)}</Text>
-          <TouchableOpacity style={styles.smallBtn} onPress={() => setSpeed((s) => +(s + 0.2).toFixed(1))}>
-            <Text style={styles.smallBtnText}>+</Text>
+        </View>
+
+        {/* Kimia */}
+        <View style={styles.labCard}>
+          <View style={styles.labCardHeader}>
+            <View style={styles.iconBox}>
+              <Ionicons name="flask" size={30} color="#608BC1" />
+            </View>
+            <View style={styles.labCardContent}>
+              <Text style={styles.labCardTitle}>Kimia</Text>
+              <Text style={styles.labCardDesc}>Tabel periodik dan kalkulator keasaman (pH)</Text>
+            </View>
+          </View>
+          <TouchableOpacity
+            style={styles.labCardBtn}
+            onPress={() => router.push('/(tabs)/lab-kimia')}>
+            <Text style={styles.labCardBtnText}>Masuk Lab</Text>
+            <Ionicons name="arrow-forward" size={16} color="#FFF" />
           </TouchableOpacity>
         </View>
 
-        <View style={styles.playRow}>
-          <TouchableOpacity style={styles.playBtn} onPress={() => setRunning((r) => !r)}>
-            <Ionicons name={running ? 'pause' : 'play'} size={20} color="#fff" />
-            <Text style={styles.playText}>{running ? 'Pause' : 'Start'}</Text>
+        {/* Fisika */}
+        <View style={styles.labCard}>
+          <View style={styles.labCardHeader}>
+            <View style={styles.iconBox}>
+              <Ionicons name="speedometer" size={30} color="#608BC1" />
+            </View>
+            <View style={styles.labCardContent}>
+              <Text style={styles.labCardTitle}>Fisika</Text>
+              <Text style={styles.labCardDesc}>Simulasi gerak parabola dan mekanika</Text>
+            </View>
+          </View>
+          <TouchableOpacity
+            style={styles.labCardBtn}
+            onPress={() => router.push('/(tabs)/lab-fisika')}>
+            <Text style={styles.labCardBtnText}>Masuk Lab</Text>
+            <Ionicons name="arrow-forward" size={16} color="#FFF" />
           </TouchableOpacity>
         </View>
-      </View>
+
+        {/* Mata Kuliah Lainnya */}
+        <View style={styles.otherSubjects}>
+          <Text style={styles.otherSubjectsTitle}>Mata Kuliah Lainnya</Text>
+          <Text style={styles.otherSubjectsText}>Berpikir Komputasional</Text>
+          <Text style={styles.otherSubjectsText}>Literasi Digital dan AI</Text>
+          <Text style={styles.otherSubjectsText}>Olahraga</Text>
+          <Text style={styles.otherSubjectsText}>Pancasila</Text>
+          <Text style={styles.otherSubjectsText}>Bahasa Indonesia</Text>
+          <Text style={styles.otherSubjectsText}>Bahasa Inggris</Text>
+        </View>
+      </ScrollView>
       </ImageBackground>
     </SafeAreaView>
   );
@@ -146,14 +165,76 @@ const styles = StyleSheet.create({
   header: { padding: 20 },
   title: { fontSize: 20, fontWeight: '800', color: '#4A628A' },
   subtitle: { color: '#7E99B0', marginTop: 6 },
-  simArea: { height: 360, justifyContent: 'flex-start', alignItems: 'center', paddingTop: 20 },
-  ball: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#608BC1' },
-  controls: { padding: 20 },
-  speedRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 12 },
-  smallBtn: { backgroundColor: '#EEE', padding: 10, borderRadius: 8 },
-  smallBtnText: { fontWeight: '700' },
-  speedText: { marginHorizontal: 12, fontWeight: '700' },
-  playRow: { marginTop: 20, alignItems: 'center' },
-  playBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#608BC1', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 12 },
-  playText: { color: '#fff', fontWeight: '700', marginLeft: 8 },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+  },
+  labCard: {
+    backgroundColor: '#F5F6F7',
+    borderRadius: 15,
+    padding: 20,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  labCardHeader: {
+    flexDirection: 'row',
+    marginBottom: 15,
+    gap: 15,
+  },
+  iconBox: {
+    width: 60,
+    height: 60,
+    backgroundColor: '#F0F4F8',
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  labCardContent: {
+    flex: 1,
+  },
+  labCardTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#4A628A',
+    marginBottom: 5,
+  },
+  labCardDesc: {
+    fontSize: 14,
+    color: '#7E99B0',
+    lineHeight: 20,
+  },
+  labCardBtn: {
+    backgroundColor: '#608BC1',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderRadius: 10,
+    gap: 8,
+  },
+  labCardBtnText: {
+    color: '#FFF',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  otherSubjects: {
+    marginTop: 20,
+    padding: 20,
+    backgroundColor: '#F5F6F7',
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  otherSubjectsTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#4A628A',
+    marginBottom: 12,
+  },
+  otherSubjectsText: {
+    fontSize: 14,
+    color: '#608BC1',
+    paddingVertical: 6,
+  },
 });
