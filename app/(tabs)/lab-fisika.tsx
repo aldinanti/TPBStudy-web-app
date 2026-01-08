@@ -1,7 +1,10 @@
 import Logo from '@/components/logo';
+import { useAuth } from '@/contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  Alert,
   Animated,
   Dimensions,
   Easing,
@@ -14,10 +17,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Alert,
 } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useAuth } from '@/contexts/AuthContext';
 
 const { width, height } = Dimensions.get('window');
 const GRAVITY = 9.8; // m/s²
@@ -38,7 +38,7 @@ export default function LabFisikaScreen() {
   const posX = useRef(new Animated.Value(20)).current;
   const posY = useRef(new Animated.Value(280)).current;
   const animationRef = useRef<Animated.CompositeAnimation | null>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<any>(null);
 
   useEffect(() => {
     const startTicker = () => {
@@ -56,7 +56,7 @@ export default function LabFisikaScreen() {
   const handleLogout = () => {
     Alert.alert(
       'Logout',
-      'Apakah Anda yakin ingin logout?',
+      'Apakah kamu yakin ingin logout?',
       [
         { text: 'Batal', style: 'cancel' },
         {
@@ -114,7 +114,7 @@ export default function LabFisikaScreen() {
     const simHeight = 280; // Height untuk simulasi
 
     const animate = () => {
-      if (!isRunning || currentTime >= tMax) {
+      if (currentTime >= tMax) {
         setIsRunning(false);
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current);
@@ -137,7 +137,7 @@ export default function LabFisikaScreen() {
       currentTime += timeStep;
       setTime(currentTime);
 
-      if (currentTime < tMax && isRunning) {
+      if (currentTime < tMax) {
         timeoutRef.current = setTimeout(animate, 50);
       } else {
         setIsRunning(false);
@@ -493,4 +493,3 @@ const styles = StyleSheet.create({
     fontFamily: 'monospace',
   },
 });
-

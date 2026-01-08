@@ -1,20 +1,20 @@
+import Logo from '@/components/logo';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  View,
+  ActivityIndicator,
+  Alert,
+  ImageBackground,
+  Platform,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  ImageBackground,
-  SafeAreaView,
-  StatusBar,
-  Alert,
-  ActivityIndicator,
-  Platform,
+  View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useAuth } from '@/contexts/AuthContext';
-import Logo from '@/components/logo';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -49,7 +49,7 @@ export default function LoginScreen() {
         
         <View style={styles.content}>
           <View style={styles.logoContainer}>
-            <Logo size={80} />
+            <Logo size={80} source={require('../assets/images/logo4.png')} />
             <Text style={styles.title}>TPBStudy</Text>
             <Text style={styles.subtitle}>Platform Pembelajaran TPB ITB</Text>
           </View>
@@ -92,10 +92,6 @@ export default function LoginScreen() {
                 <Text style={styles.loginButtonText}>Masuk</Text>
               )}
             </TouchableOpacity>
-
-            <Text style={styles.demoText}>
-              Demo: Masukkan email dan password apapun untuk masuk
-            </Text>
           </View>
         </View>
       </ImageBackground>
@@ -178,12 +174,5 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 16,
     fontWeight: '700',
-  },
-  demoText: {
-    fontSize: 12,
-    color: '#999',
-    textAlign: 'center',
-    marginTop: 20,
-  },
+  }
 });
-

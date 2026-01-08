@@ -49,6 +49,12 @@ export default function TabLayout() {
           href: null, // Hide from tab bar
         }}
       />
+      <Tabs.Screen
+        name="lab-kalkulus"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
     </Tabs>
   );
 }

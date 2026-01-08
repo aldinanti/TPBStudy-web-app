@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 interface User {
   id: string;
@@ -41,8 +41,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      // Simulate API call - replace with actual API
-      // For demo purposes, accept any email/password
       if (email && password) {
         const userData: User = {
           id: '1',

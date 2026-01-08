@@ -1,7 +1,11 @@
 import Logo from '@/components/logo';
+import { useAuth } from '@/contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import {
+  Alert,
   Animated,
   Dimensions,
   Easing,
@@ -13,10 +17,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Alert,
 } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useAuth } from '@/contexts/AuthContext';
 
 const { width } = Dimensions.get('window');
 
@@ -29,8 +30,8 @@ export default function HomeScreen() {
     const startAnimation = () => {
       scrollX.setValue(width);
       Animated.timing(scrollX, {
-        toValue: -width * 5, 
-        duration: 20000,
+        toValue: -width * 5,
+        duration: 40000,
         easing: Easing.linear,
         useNativeDriver: true,
       }).start(() => startAnimation());
@@ -41,7 +42,7 @@ export default function HomeScreen() {
   const handleLogout = () => {
     Alert.alert(
       'Logout',
-      'Apakah Anda yakin ingin logout?',
+      'Apakah kamu yakin ingin logout?',
       [
         { text: 'Batal', style: 'cancel' },
         {
@@ -63,11 +64,16 @@ export default function HomeScreen() {
       <StatusBar barStyle="light-content" backgroundColor="#608BC1" />
 
       {/* 1. RUNNING TEXT */}
-      <View style={styles.tickerContainer}>
+      <LinearGradient
+        colors={['#3b6db1', '#4a69e2', '#7b42f5']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.tickerContainer}
+      >
         <Animated.Text style={[styles.tickerText, { transform: [{ translateX: scrollX }] }]}>
-          TPB Study! Tempat kamu bisa belajar materi-materi TPB tanpa pusing! 📚 Gak paham materi TPB? Tenang! Ada TPB Study! ✏️
+          TPB Study! Tempat kamu bisa belajar materi-materi TPB tanpa pusing! 📚 Gak paham materi TPB? Tenang! Ada TPB Study! ✏️ Kamu bisa belajar Kalkulus, Fisika, Kimia di TPB Study! 🧠 TPB Study! Tempat kamu bisa belajar materi-materi TPB terbaik! 🚀
         </Animated.Text>
-      </View>
+      </LinearGradient>
       
       {/* 2. NAV BAR */}
       <View style={styles.navBar}>
@@ -85,7 +91,7 @@ export default function HomeScreen() {
         <View style={styles.heroSection}>
           <Text style={styles.heroTitle}>Selamat Datang di TPBStudy!</Text>
           <Text style={styles.heroSubtitle}>
-            Platform pembelajaran interaktif untuk mata kuliah TPB ITB dengan simulasi dan eksperimen virtual.
+            Platform pembelajaran interaktif untuk mata kuliah TPB ITB dengan simulasi dan eksperimen virtual. Didesign untuk membantu kamu memahami TPB!
           </Text>
           
           {/* Stats Row */}
@@ -95,7 +101,7 @@ export default function HomeScreen() {
             <View style={styles.statItem}><Text style={styles.statNum}>100%</Text><Text style={styles.statLab}>INTERAKTIF</Text></View>
           </View>
 
-          <TouchableOpacity style={styles.ctaButton}>
+          <TouchableOpacity style={styles.ctaButton} onPress={() => router.push('/(tabs)/virtuallab')}>
             <Ionicons name="play" size={18} color="#FFF" style={{marginRight: 8}} />
             <Text style={styles.ctaText}>Mulai Belajar</Text>
           </TouchableOpacity>
@@ -116,45 +122,6 @@ export default function HomeScreen() {
           <Text style={styles.mataKuliahItem}>Bahasa Inggris</Text>
         </View>
 
-        {/* 5. FOOTER - Navigasi & Kontak */}
-        <View style={styles.footer}>
-          <View style={styles.footerColumn}>
-            <Text style={styles.footerTitle}>Navigasi</Text>
-            <TouchableOpacity onPress={() => router.push('/(tabs)')}>
-              <Text style={styles.footerLink}>Home</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/(tabs)/virtuallab')}>
-              <Text style={styles.footerLink}>Virtual Lab</Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Text style={styles.footerLink}>About Us</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/(tabs)/pomodoro')}>
-              <Text style={styles.footerLink}>Pomodoro</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.footerColumn}>
-            <Text style={styles.footerTitle}>Mata Kuliah</Text>
-            <Text style={styles.footerText}>Matematika</Text>
-            <Text style={styles.footerText}>Fisika</Text>
-            <Text style={styles.footerText}>Kimia</Text>
-            <Text style={styles.footerText}>Berpikir Komputasional</Text>
-            <Text style={styles.footerText}>Literasi Digital dan AI</Text>
-            <Text style={styles.footerText}>Olahraga</Text>
-            <Text style={styles.footerText}>Pancasila</Text>
-            <Text style={styles.footerText}>Bahasa Indonesia</Text>
-            <Text style={styles.footerText}>Bahasa Inggris</Text>
-          </View>
-
-          <View style={styles.footerColumn}>
-            <Text style={styles.footerTitle}>Kontak</Text>
-            <Text style={styles.footerText}>Jl. awikawokoawk, Bandung, Jakarta</Text>
-            <Text style={styles.footerText}>08123456789</Text>
-            <Text style={styles.footerText}>@instagram</Text>
-          </View>
-        </View>
-
       </ScrollView>
       </ImageBackground>
     </SafeAreaView>
@@ -168,15 +135,20 @@ const styles = StyleSheet.create({
   },
     background: { flex: 1 },
   tickerContainer: {
-    backgroundColor: '#4A628A', 
-    height: 30,
+    height: 44,
     justifyContent: 'center',
+    overflow: 'hidden',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   tickerText: {
     color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
-    width: width * 6,
+    fontSize: 14,
+    fontWeight: 'bold',
+    width: width * 10, // Memastikan teks panjang tidak terpotong
   },
   navBar: {
     flexDirection: 'row',
@@ -245,15 +217,15 @@ const styles = StyleSheet.create({
   statNum: {
     fontSize: 22,
     fontWeight: '900',
-    color: '#608BC1',
+    color: '#749bc3',
   },
   statLab: {
     fontSize: 10,
-    color: '#A0A0A0',
+    color: '#749bc3',
     marginTop: 4,
   },
   ctaButton: {
-    backgroundColor: '#7AB2D3',
+    backgroundColor: '#749bc3',
     flexDirection: 'row',
     paddingVertical: 14,
     paddingHorizontal: 30,
@@ -283,35 +255,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#608BC1',
     paddingVertical: 8,
-  },
-  footer: {
-    backgroundColor: '#F5F6F7',
-    paddingHorizontal: 25,
-    paddingVertical: 30,
-    marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 20,
-  },
-  footerColumn: {
-    flex: 1,
-    gap: 8,
-  },
-  footerTitle: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#4A628A',
-    marginBottom: 8,
-  },
-  footerLink: {
-    fontSize: 14,
-    color: '#608BC1',
-    textDecorationLine: 'underline',
-    paddingVertical: 4,
-  },
-  footerText: {
-    fontSize: 14,
-    color: '#608BC1',
-    paddingVertical: 2,
   },
 });

@@ -1,7 +1,10 @@
 import Logo from '@/components/logo';
+import { useAuth } from '@/contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  Alert,
   Animated,
   Dimensions,
   Easing,
@@ -14,10 +17,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Alert,
 } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useAuth } from '@/contexts/AuthContext';
 
 const { width } = Dimensions.get('window');
 
@@ -76,7 +76,7 @@ export default function LabKimiaScreen() {
   const handleLogout = () => {
     Alert.alert(
       'Logout',
-      'Apakah Anda yakin ingin logout?',
+      'Apakah kamu yakin ingin logout?',
       [
         { text: 'Batal', style: 'cancel' },
         {

@@ -1,12 +1,14 @@
 import Logo from '@/components/logo';
-import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions, Easing, ImageBackground, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useRef } from 'react';
+import { Alert, Animated, Dimensions, Easing, ImageBackground, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+const { width } = Dimensions.get('window');
 
 export default function VirtualLabScreen() {
-  const { width } = Dimensions.get('window');
   const scrollXRef = useRef(new Animated.Value(width));
   const scrollX = scrollXRef.current;
   const { logout } = useAuth();
@@ -15,7 +17,7 @@ export default function VirtualLabScreen() {
   const handleLogout = () => {
     Alert.alert(
       'Logout',
-      'Apakah Anda yakin ingin logout?',
+      'Apakah kamu yakin ingin logout?',
       [
         { text: 'Batal', style: 'cancel' },
         {
@@ -35,7 +37,7 @@ export default function VirtualLabScreen() {
       scrollX.setValue(width);
       Animated.timing(scrollX, {
         toValue: -width * 5,
-        duration: 20000,
+        duration: 40000,
         easing: Easing.linear,
         useNativeDriver: true,
       }).start(() => startTicker());
@@ -51,9 +53,16 @@ export default function VirtualLabScreen() {
         imageStyle={{ resizeMode: 'cover', position: 'absolute', right: 0, width: width * 1.2, height: '100%' }}
       >
       <StatusBar barStyle="light-content" backgroundColor="#608BC1" />
-      <View style={styles.tickerContainer}>
-        <Animated.Text style={[styles.tickerText, { transform: [{ translateX: scrollX }] }]}>TPB Study! Tempat kamu bisa belajar materi-materi TPB tanpa pusing!</Animated.Text>
-      </View>
+      <LinearGradient
+        colors={['#3b6db1', '#4a69e2', '#7b42f5']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.tickerContainer}
+      >
+        <Animated.Text style={[styles.tickerText, { transform: [{ translateX: scrollX }] }]}>
+          TPB Study! Tempat kamu bisa belajar materi-materi TPB tanpa pusing! 📚 Gak paham materi TPB? Tenang! Ada TPB Study! ✏️ Kamu bisa belajar Kalkulus, Fisika, Kimia di TPB Study! 🧠 TPB Study! Tempat kamu bisa belajar materi-materi TPB terbaik! 🚀
+        </Animated.Text>
+      </LinearGradient>
       <View style={styles.navBar}>
         <View style={styles.logoWrapperCentered}>
           <Logo size={56} />
@@ -64,7 +73,7 @@ export default function VirtualLabScreen() {
       </View>
       <View style={styles.header}>
         <Text style={styles.title}>Virtual Lab</Text>
-        <Text style={styles.subtitle}>Pilih mata kuliah untuk masuk ke laboratorium virtual</Text>
+        <Text style={styles.subtitle}>Pilih mata kuliah untuk mulai belajar!</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
@@ -81,7 +90,7 @@ export default function VirtualLabScreen() {
           </View>
           <TouchableOpacity
             style={styles.labCardBtn}
-            onPress={() => router.push('/(tabs)/virtuallab?lab=matematika')}>
+            onPress={() => router.push('/(tabs)/lab-kalkulus')}>
             <Text style={styles.labCardBtnText}>Masuk Lab</Text>
             <Ionicons name="arrow-forward" size={16} color="#FFF" />
           </TouchableOpacity>
@@ -144,8 +153,17 @@ export default function VirtualLabScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFF' },
   background: { flex: 1 },
-  tickerContainer: { height: 28, backgroundColor: '#4A628A', justifyContent: 'center', overflow: 'hidden' },
-  tickerText: { color: '#fff', paddingHorizontal: 12, fontWeight: '700' },
+  tickerContainer: { 
+    height: 44, 
+    justifyContent: 'center', 
+    overflow: 'hidden',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  tickerText: { color: '#fff', paddingHorizontal: 12, fontWeight: 'bold', fontSize: 14, width: width * 10 },
   navBar: { 
     height: 64, 
     backgroundColor: '#608BC1', 

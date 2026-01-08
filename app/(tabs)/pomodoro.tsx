@@ -1,23 +1,27 @@
 import Logo from '@/components/logo';
-import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '@/contexts/AuthContext';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-    Animated,
-    Dimensions,
-    Easing,
-    ImageBackground,
-    Platform,
-    SafeAreaView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    Vibration,
-    View,
-    Alert,
+  Alert,
+  Animated,
+  Dimensions,
+  Easing,
+  ImageBackground,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Vibration,
+  View
 } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useAuth } from '@/contexts/AuthContext';
+
+const { width } = Dimensions.get('window');
 
 export default function PomodoroScreen() {
   const WORK_DEFAULT = 25; // minutes
@@ -32,7 +36,6 @@ export default function PomodoroScreen() {
   const [isRunning, setIsRunning] = useState<boolean>(false);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const { width } = Dimensions.get('window');
   const scrollXRef = useRef(new Animated.Value(width));
   const scrollX = scrollXRef.current;
   const { logout } = useAuth();
@@ -41,7 +44,7 @@ export default function PomodoroScreen() {
   const handleLogout = () => {
     Alert.alert(
       'Logout',
-      'Apakah Anda yakin ingin logout?',
+      'Apakah kamu yakin ingin logout?',
       [
         { text: 'Batal', style: 'cancel' },
         {
@@ -61,13 +64,13 @@ export default function PomodoroScreen() {
       scrollX.setValue(width);
       Animated.timing(scrollX, {
         toValue: -width * 5,
-        duration: 20000,
+        duration: 40000,
         easing: Easing.linear,
         useNativeDriver: true,
       }).start(() => startTicker());
     };
     startTicker();
-  }, [scrollX, width]);
+  }, [scrollX]);
 
   useEffect(() => {
     // keep secondsLeft synced when switching presets (but not when running)
@@ -147,6 +150,12 @@ export default function PomodoroScreen() {
     return `${m}:${s}`;
   }
 
+  const getSessionColor = () => {
+    if (mode === 'short') return '#4caf50'; // Hijau
+    if (mode === 'long') return '#2196f3'; // Biru
+    return '#e65a4c'; // Merah (Default)
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ImageBackground
@@ -154,125 +163,242 @@ export default function PomodoroScreen() {
         style={styles.background}
         imageStyle={{ resizeMode: 'cover', position: 'absolute', right: 0, width: width * 1.2, height: '100%' }}
       >
-      <StatusBar barStyle="light-content" backgroundColor="#608BC1" />
-      <View style={styles.tickerContainer}>
-        <Animated.Text style={[styles.tickerText, { transform: [{ translateX: scrollX }] }]}>TPB Study! Fokus dan produktif dengan Pomodoro.</Animated.Text>
-      </View>
-      <View style={styles.navBar}>
-        <View style={styles.logoWrapperCentered}>
-          <Logo size={56} />
-        </View>
-        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-          <Ionicons name="log-out-outline" size={24} color="#FFF" />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.header}>
-        <Text style={styles.title}>Pomodoro</Text>
-        <Text style={styles.subtitle}>Fokus 25 menit, istirahat 5 menit.</Text>
-      </View>
+        <StatusBar barStyle="light-content" backgroundColor="#608BC1" />
+        
+        {/* Moving Banner / Ticker */}
+        <LinearGradient
+          colors={['#3b6db1', '#4a69e2', '#7b42f5']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.tickerContainer}
+        >
+          <Animated.Text style={[styles.tickerText, { transform: [{ translateX: scrollX }] }]}>
+            TPB Study! Tempat kamu bisa belajar materi-materi TPB tanpa pusing! 📚 Gak paham materi TPB? Tenang! Ada TPB Study! ✏️ Kamu bisa belajar Kalkulus, Fisika, Kimia di TPB Study! 🧠 TPB Study! Tempat kamu bisa belajar materi-materi TPB terbaik! 🚀
+          </Animated.Text>
+        </LinearGradient>
 
-      <View style={styles.timerBox}>
-        <Text style={styles.modeText}>{mode === 'work' ? 'Work' : mode === 'short' ? 'Short Break' : 'Long Break'}</Text>
-        <Text style={styles.timeLarge}>{formatTime(secondsLeft)}</Text>
-        <View style={styles.controlsRow}>
-          <TouchableOpacity style={styles.controlBtn} onPress={isRunning ? pause : start}>
-            <Text style={styles.controlBtnText}>{isRunning ? 'Pause' : 'Start'}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.controlBtn, styles.resetBtn]} onPress={reset}>
-            <Text style={styles.controlBtnText}>Reset</Text>
+        <View style={styles.navBar}>
+          <View style={styles.logoWrapperCentered}>
+            <Logo size={56} />
+          </View>
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+            <Ionicons name="log-out-outline" size={24} color="#FFF" />
           </TouchableOpacity>
         </View>
-      </View>
 
-      <View style={styles.presetRow}>
-        <TouchableOpacity
-          style={[styles.presetBtn, mode === 'work' && styles.presetActive]}
-          onPress={() => {
-            setMode('work');
-            if (!isRunning) setSecondsLeft(workMin * 60);
-          }}
-        >
-          <Text style={styles.presetText}>Work ({workMin}m)</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.presetBtn, mode === 'short' && styles.presetActive]}
-          onPress={() => {
-            setMode('short');
-            if (!isRunning) setSecondsLeft(shortBreakMin * 60);
-          }}
-        >
-          <Text style={styles.presetText}>Short ({shortBreakMin}m)</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.presetBtn, mode === 'long' && styles.presetActive]}
-          onPress={() => {
-            setMode('long');
-            if (!isRunning) setSecondsLeft(longBreakMin * 60);
-          }}
-        >
-          <Text style={styles.presetText}>Long ({longBreakMin}m)</Text>
-        </TouchableOpacity>
-      </View>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          
+          {/* Header Judul & Deskripsi */}
+          <View style={styles.headerSection}>
+            <View style={styles.headerTitleRow}>
+              <View style={styles.clockIconContainer}>
+                <MaterialCommunityIcons name="clock-outline" size={32} color="white" />
+              </View>
+              <Text style={styles.headerTitle}>Pomodoro Timer</Text>
+            </View>
+            <Text style={styles.headerSubtitle}>
+              Tingkatkan fokus dan produktivitas belajar dengan teknik Pomodoro.
+            </Text>
+          </View>
 
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={styles.smallBtn}
-          onPress={() => {
-            setWorkMin((v) => Math.max(1, v - 1));
-          }}
-        >
-          <Text style={styles.smallBtnText}>- Work</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.smallBtn}
-          onPress={() => {
-            setWorkMin((v) => v + 1);
-          }}
-        >
-          <Text style={styles.smallBtnText}>+ Work</Text>
-        </TouchableOpacity>
-      </View>
+          {/* Container Utama (Card) */}
+          <View style={styles.card}>
+            
+            {/* Label Sesi */}
+            <View style={[styles.sessionLabel, { backgroundColor: getSessionColor() }]}>
+              <Text style={styles.sessionLabelText}>
+                {mode === 'work' ? 'SESI FOKUS' : mode === 'short' ? 'BREAK PENDEK' : 'BREAK PANJANG'}
+              </Text>
+            </View>
+            
+            <Text style={styles.pomodoroTitle}>Pomodoro #1</Text>
+
+            {/* Timer Lingkaran */}
+            <View style={styles.timerContainer}>
+              <View style={styles.timerCircle}>
+                {/* Indikator Titik Merah */}
+                <View style={styles.redDot} />
+                {/* Angka Waktu */}
+                <Text style={styles.timerText}>{formatTime(secondsLeft)}</Text>
+              </View>
+            </View>
+
+            {/* Baris Tombol Kontrol Atas */}
+            <View style={styles.controlsGrid}>
+              <TouchableOpacity 
+                style={[styles.controlBtn, styles.btnCream, isRunning && styles.btnDisabled]} 
+                onPress={start}
+                disabled={isRunning}
+              >
+                <Ionicons name="play" size={20} color="#82a3c5" />
+                <Text style={styles.btnTextCream}>MULAI</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[styles.controlBtn, styles.btnBlue]} 
+                onPress={pause}
+                disabled={!isRunning}
+              >
+                <Ionicons name="pause" size={20} color={isRunning ? "#FFF" : "#82a3c5"} />
+                <Text style={[styles.btnTextBlue, !isRunning && { color: '#82a3c5' }]}>JEDA</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={[styles.controlBtn, styles.btnCream]} onPress={reset}>
+                <Ionicons name="refresh" size={20} color="#82a3c5" />
+                <Text style={styles.btnTextCream}>RESET</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Baris Tombol Mode Bawah */}
+            <View style={styles.modesGrid}>
+              <TouchableOpacity 
+                style={[styles.modeBtn, mode === 'work' && styles.modeBtnActive]}
+                onPress={() => { setMode('work'); setIsRunning(false); setSecondsLeft(workMin * 60); }}
+              >
+                <MaterialCommunityIcons name="brain" size={18} color="black" />
+                <Text style={styles.modeBtnText}>FOCUS</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[styles.modeBtn, mode === 'short' && styles.modeBtnActive]}
+                onPress={() => { setMode('short'); setIsRunning(false); setSecondsLeft(shortBreakMin * 60); }}
+              >
+                <Ionicons name="cafe-outline" size={18} color="black" />
+                <Text style={styles.modeBtnTextSmall}>SHORT BREAK</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={[styles.modeBtn, mode === 'long' && styles.modeBtnActive]}
+                onPress={() => { setMode('long'); setIsRunning(false); setSecondsLeft(longBreakMin * 60); }}
+              >
+                <MaterialCommunityIcons name="sofa" size={18} color="black" />
+                <Text style={styles.modeBtnTextSmall}>LONG BREAK</Text>
+              </TouchableOpacity>
+            </View>
+
+          </View>
+        </ScrollView>
       </ImageBackground>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFF' },
+  container: { flex: 1 },
   background: { flex: 1 },
-  tickerContainer: { height: 28, backgroundColor: '#4A628A', justifyContent: 'center', overflow: 'hidden' },
-  tickerText: { color: '#fff', paddingHorizontal: 12, fontWeight: '700' },
-  navBar: { 
-    height: 64, 
-    backgroundColor: '#608BC1', 
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  tickerContainer: { 
+    height: 44, 
+    justifyContent: 'center', 
+    overflow: 'hidden',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  tickerText: { color: '#fff', paddingHorizontal: 12, fontWeight: 'bold', fontSize: 14, width: width * 10 },
+  navBar: { height: 64, backgroundColor: '#608BC1', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20 },
+  logoWrapperCentered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  logoutButton: { padding: 8 },
+  scrollContent: { flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
+  
+  // Header Section
+  headerSection: { alignItems: 'center', marginBottom: 30 },
+  headerTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 },
+  clockIconContainer: { backgroundColor: '#e65a4c', padding: 8, borderRadius: 50, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 },
+  headerTitle: { color: '#5182a4', fontSize: 32, fontWeight: '900', letterSpacing: -0.5 },
+  headerSubtitle: { color: '#7fa3c1', fontSize: 16, fontWeight: '500', textAlign: 'center', maxWidth: 300, lineHeight: 22 },
+  
+  // Card Styles
+  card: {
+    width: '100%',
+    maxWidth: 400,
+    backgroundColor: '#82a3c5',
+    borderRadius: 32,
+    padding: 32,
     alignItems: 'center',
-    paddingHorizontal: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 10,
   },
-  logoWrapperCentered: { 
+  sessionLabel: {
+    backgroundColor: '#e65a4c',
+    paddingHorizontal: 40,
+    paddingVertical: 12,
+    borderRadius: 999,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  sessionLabelText: { color: '#FFF', fontWeight: 'bold', fontSize: 18, letterSpacing: 1.5 },
+  pomodoroTitle: { color: 'rgba(255,255,255,0.9)', fontSize: 16, fontWeight: '600', marginBottom: 48 },
+  
+  // Timer Circle
+  timerContainer: { marginBottom: 64, alignItems: 'center', justifyContent: 'center' },
+  timerCircle: {
+    width: 280,
+    height: 280,
+    borderRadius: 140,
+    borderWidth: 6,
+    borderColor: 'rgba(255,255,255,0.4)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  redDot: {
+    position: 'absolute',
+    top: -6,
+    width: 16,
+    height: 16,
+    backgroundColor: '#e65a4c',
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#82a3c5',
+  },
+  timerText: { fontSize: 80, fontWeight: '900', color: '#FFF' },
+
+  // Controls
+  controlsGrid: { flexDirection: 'row', gap: 16, width: '100%', marginBottom: 24 },
+  controlBtn: {
     flex: 1,
-    alignItems: 'center', 
-    justifyContent: 'center' 
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    borderRadius: 16,
+    gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
-  logoutButton: {
-    padding: 8,
+  btnCream: { backgroundColor: '#fcf9ee' },
+  btnBlue: { backgroundColor: '#b2c3d4' },
+  btnDisabled: { opacity: 0.7 },
+  btnTextCream: { color: '#82a3c5', fontWeight: '900', fontSize: 14 },
+  btnTextBlue: { color: '#FFF', fontWeight: '900', fontSize: 14 },
+
+  // Modes
+  modesGrid: { flexDirection: 'row', gap: 12, width: '100%' },
+  modeBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 4,
+    borderRadius: 12,
+    backgroundColor: '#fcf9ee',
+    gap: 6,
+    opacity: 0.9,
   },
-  header: { padding: 20, alignItems: 'center' },
-  title: { fontSize: 28, fontWeight: '800', color: '#4A628A' },
-  subtitle: { color: '#7E99B0', marginTop: 6 },
-  timerBox: { marginTop: 40, alignItems: 'center' },
-  modeText: { color: '#7E99B0', marginBottom: 10, fontWeight: '700' },
-  timeLarge: { fontSize: 72, fontWeight: '900', color: '#4A628A' },
-  controlsRow: { flexDirection: 'row', marginTop: 20, gap: 12 },
-  controlBtn: { backgroundColor: '#608BC1', paddingVertical: 12, paddingHorizontal: 30, borderRadius: 12 },
-  resetBtn: { backgroundColor: '#94BCE0' },
-  controlBtnText: { color: '#fff', fontWeight: '700' },
-  presetRow: { flexDirection: 'row', justifyContent: 'space-around', marginTop: 36, paddingHorizontal: 12 },
-  presetBtn: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: 10, backgroundColor: '#F3F6FB' },
-  presetActive: { backgroundColor: '#608BC1' },
-  presetText: { fontWeight: '700' },
-  footer: { marginTop: 36, flexDirection: 'row', justifyContent: 'space-around' },
-  smallBtn: { padding: 10, backgroundColor: '#EEE', borderRadius: 8 },
-  smallBtnText: { color: '#333' },
+  modeBtnActive: { opacity: 1, backgroundColor: '#FFF' },
+  modeBtnText: { color: '#000', fontWeight: 'bold', fontSize: 10 },
+  modeBtnTextSmall: { color: '#000', fontWeight: 'bold', fontSize: 9 },
 });
